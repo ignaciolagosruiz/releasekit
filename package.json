@@ -66,14 +66,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nachlakes/releasekit.git"
+    "url": "git+https://github.com/ignaciolagosruiz/releasekit.git"
   },
   "bugs": {
-    "url": "https://github.com/nachlakes/releasekit/issues"
+    "url": "https://github.com/ignaciolagosruiz/releasekit/issues"
   },
-  "homepage": "https://github.com/nachlakes/releasekit#readme",
+  "homepage": "https://github.com/ignaciolagosruiz/releasekit#readme",
   "author": {
-    "name": "nachlakes",
-    "url": "https://github.com/nachlakes"
+    "name": "ignaciolagosruiz",
+    "url": "https://github.com/ignaciolagosruiz"
   }
 }

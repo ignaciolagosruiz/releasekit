@@ -1,6 +1,6 @@
 # releasekit
 
-[![CI](https://github.com/nachlakes/releasekit/actions/workflows/ci.yml/badge.svg)](https://github.com/nachlakes/releasekit/actions/workflows/ci.yml)
+[![CI](https://github.com/ignaciolagosruiz/releasekit/actions/workflows/ci.yml/badge.svg)](https://github.com/ignaciolagosruiz/releasekit/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/releasekit.svg)](https://www.npmjs.com/package/releasekit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -74,7 +74,7 @@ A `releasekit.config.json` at the project root overrides any default:
   "packageJsonPath": "./package.json",
   "remote": "origin",
   "branch": "main",
-  "repoUrl": "https://github.com/nachlakes/releasekit"
+  "repoUrl": "https://github.com/ignaciolagosruiz/releasekit"
 }
 ```
 
