@@ -100,28 +100,46 @@ export function parseCommitLine(line: string): ParsedCommit | null {
 /**
  * Parse a multi-line git log blob into a list of commits.
  *
- * The expected format is produced by `getCommitsSince()`:
+ * Two input formats are supported:
  *
- *   <hash>\n<author>\n<date>\n<subject>\n<body>\n<<__RK_COMMIT_END__>>\n
+ * 1. **New format** (produced by `getCommitsSince()`):
  *
- * (the body may span multiple lines and may be empty).
+ *        <hash>\n<author>\n<date>\n<subject>\n<body>\n<<__RK_COMMIT_END__>>\n
+ *
+ * 2. **Legacy format** (also accepted for backwards compatibility):
+ *
+ *        commit <hash>\n<author>|<date>|<subject>\n<body>\ncommit <hash>\n...
  */
 export function parseCommits(log: string): ParsedCommit[] {
   if (!log.trim()) return [];
+
+  // Try the new format first: split on the end-of-commit sentinel.
+  if (log.includes('<<__RK_COMMIT_END__>>')) {
+    const out: ParsedCommit[] = [];
+    const blocks = log.split('<<__RK_COMMIT_END__>>');
+    for (const block of blocks) {
+      const trimmed = block.replace(/^\n+|\n+$/g, '');
+      if (!trimmed) continue;
+      const lines = trimmed.split('\n');
+      if (lines.length < 4) continue;
+      const [hash, author, date, ...rest] = lines;
+      const subject = rest[0] ?? '';
+      const body = rest.length > 1 ? rest.slice(1).join('\n').trim() : undefined;
+      const headerLine = `${hash}|${author}|${date}|${subject}${body ? '\n' + body : ''}`;
+      const parsed = parseCommitLine(headerLine);
+      if (parsed) out.push(parsed);
+    }
+    return out;
+  }
+
+  // Legacy format: split on `commit <hash>` markers, then parse the
+  // `<author>|<date>|<subject>\n<body>` block that follows each marker.
   const out: ParsedCommit[] = [];
-  const blocks = log.split('<<__RK_COMMIT_END__>>');
+  const blocks = log.split(/^commit [0-9a-f]{40}\s*$/m);
   for (const block of blocks) {
     const trimmed = block.replace(/^\n+|\n+$/g, '');
-    if (!trimmed) continue;
-    // Reconstruct a single line `<hash>|<author>|<date>|<subject>` followed
-    // by the body on a new line — the same shape `parseCommitLine` expects.
-    const lines = trimmed.split('\n');
-    if (lines.length < 4) continue;
-    const [hash, author, date, ...rest] = lines;
-    const subject = rest[0] ?? '';
-    const body = rest.length > 1 ? rest.slice(1).join('\n').trim() : undefined;
-    const headerLine = `${hash}|${author}|${date}|${subject}${body ? '\n' + body : ''}`;
-    const parsed = parseCommitLine(headerLine);
+    if (!trimmed.trim()) continue;
+    const parsed = parseCommitLine(trimmed);
     if (parsed) out.push(parsed);
   }
   return out;
